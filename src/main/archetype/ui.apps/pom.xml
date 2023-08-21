@@ -55,6 +55,9 @@
                     <group>${groupId}</group>
                     <name>${artifactId}</name>
                     <packageType>application</packageType>
+                    #if (($includeForms == "y" || $includeFormsenrollment == "y" || $includeFormscommunications == "y" || $includeFormsheadless == "y") && $aemVersion == "cloud")
+                    <skipSubPackageValidation>true</skipSubPackageValidation>
+                    #end
                     <repositoryStructurePackages>
                         <repositoryStructurePackage>
                             <groupId>${groupId}</groupId>
@@ -82,12 +85,6 @@
                         <dependency>
                             <groupId>com.adobe.commerce.cif</groupId>
                             <artifactId>core-cif-components-apps</artifactId>
-                        </dependency>
-#end
-#if ( ($includeForms == "y" or $includeFormsenrollment == "y" or $includeFormscommunications == "y" or $includeFormsheadless == "y") and $aemVersion != "cloud" )
-                        <dependency>
-                            <groupId>com.adobe.aem</groupId>
-                            <artifactId>core-forms-components-apps</artifactId>
                         </dependency>
 #end
                     </dependencies>
@@ -209,7 +206,7 @@ Require-Capability: osgi.extender;filter:="(&(osgi.extender=sling.scripting)(ver
             <version>${project.version}</version>
         </dependency>
 
-#if ( $frontendModule != "none" )
+#if ( $frontendModule != "none" && $frontendModule != "decoupled" )
         <dependency>
             <groupId>${groupId}</groupId>
             <artifactId>${rootArtifactId}.ui.frontend</artifactId>
@@ -320,37 +317,43 @@ Require-Capability: osgi.extender;filter:="(&(osgi.extender=sling.scripting)(ver
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>magento-graphql</artifactId>
         </dependency>
-#if ( $aemVersion != "cloud")
-        <dependency>
-            <groupId>com.adobe.commerce.cif</groupId>
-            <artifactId>graphql-client</artifactId>
-        </dependency>
-#end
-#if ( $aemVersion == "cloud")
         <dependency>
             <groupId>com.adobe.aem</groupId>
             <artifactId>aem-cif-sdk-api</artifactId>
             <scope>provided</scope>
         </dependency>
 #end
-#end
 #if ($includeForms == "y" or $includeFormsenrollment == "y" or $includeFormscommunications == "y" or $includeFormsheadless == "y")
         <!-- AEM Forms Dependencies -->
+      #if ($aemVersion == "cloud")
+      <dependency>
+        <groupId>com.adobe.aem</groupId>
+        <artifactId>aem-forms-sdk-api</artifactId>
+      </dependency>
+      #else
+      <dependency>
+        <groupId>com.adobe.aemfd</groupId>
+        <artifactId>aemfd-client-sdk</artifactId>
+      </dependency>
+      #end
         <dependency>
-            <groupId>com.adobe.aem</groupId>
-            <artifactId>aem-forms-sdk-api</artifactId>
+          <groupId>com.adobe.aem</groupId>
+          <artifactId>core-forms-components-apps</artifactId>
+          <type>zip</type>
         </dependency>
-        #if ($aemVersion != "cloud") 
-            <dependency>
-                <groupId>com.adobe.aem</groupId>
-                <artifactId>core-forms-components-apps</artifactId>
-                <type>zip</type>
-            </dependency>
-            <dependency>
-                <groupId>com.adobe.aem</groupId>
-                <artifactId>core-forms-components-core</artifactId>
-            </dependency>
-        #end
+        <dependency>
+          <groupId>com.adobe.aem</groupId>
+          <artifactId>core-forms-components-core</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>com.adobe.aem</groupId>
+          <artifactId>core-forms-components-af-apps</artifactId>
+          <type>zip</type>
+        </dependency>
+        <dependency>
+          <groupId>com.adobe.aem</groupId>
+          <artifactId>core-forms-components-af-core</artifactId>
+        </dependency>
 #end
         <!-- HTL dependencies needed for the HTL Maven Plugin source code generation -->
         <dependency>

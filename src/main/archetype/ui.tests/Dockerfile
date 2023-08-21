@@ -15,7 +15,7 @@
 #
 # DO NOT MODIFY
 #
-FROM node:14-slim
+FROM node:18.15.0-slim
 
 ENV APP_PATH /usr/src/app
 ENV SELENIUM_STARTUP_TIMEOUT 60
@@ -53,7 +53,7 @@ WORKDIR ${APP_PATH}
 # Copy + Install WDIO project
 ENV TEST_RUN_COMMAND "npm run test-cloud"
 COPY test-module/ ./
-RUN npm install
+RUN npm ci
 
 # Begin CloudManager Convention >>>
 ## Copy helper to wait on Selenium readiness
